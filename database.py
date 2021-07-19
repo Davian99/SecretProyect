@@ -12,4 +12,6 @@ if cursor.execute("PRAGMA table_info(TENNIS_PLAYERS)").fetchall() == []:
     cursor.execute(tennis_players_table_query)
     conn.commit()
 
-all_players = set([x[0].upper() for x in cursor.execute("SELECT name FROM TENNIS_PLAYERS").fetchall()])
+all_players = {}
+all_players['tennis'] = set([x[0].upper() for x in cursor.execute("SELECT name FROM TENNIS_PLAYERS").fetchall()])
+all_players['table_tennis'] = set([x[0].upper() for x in cursor.execute("SELECT name FROM TABLE_TENNIS_PLAYERS").fetchall()])

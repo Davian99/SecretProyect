@@ -11,9 +11,10 @@ def Driver(headless):
 
     options.add_argument('ignore-certificate-errors')
     options.add_argument("--window-size=1920,1080")
-    options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    options.add_experimental_option("excludeSwitches", ["enable-automation", "enable-logging"])
     options.add_experimental_option('useAutomationExtension', False)
     options.add_argument('log-level=3')
+
 
     driver = webdriver.Chrome(options=options)
     return driver

@@ -9,6 +9,12 @@ import time
 class House(ABC):
     def __init__(self):
         self.driver = Driver(headless=True)
+        self.alive = True
+    def __del__(self):
+        if self.alive:
+            self.end()
+    def house(self):
+        pass
     def link_sport(self, sport):
         pass
     def sport_bets(self, sport):
@@ -18,3 +24,4 @@ class House(ABC):
     def end(self):
         self.driver.close()
         self.driver.quit()
+        self.alive = False

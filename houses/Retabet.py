@@ -5,13 +5,14 @@ class Retabet(House):
         super().__init__()
         self.link = "https://apuestas.retabet.es"
         self.sports = {"tennis" : "tenis-m8"}
-        self.ret_bets = []
+        self.ret_bets = {}
 
     def link_sport(self, sport):
         return f"{self.link}/deportes/{self.sports[sport]}"
 
     def sport_bets(self, sport):
-        self.ret_bets = []
+        start = time.time()
+        self.ret_bets[sport] = []
         self.driver.get(self.link_sport(sport))
         response = self.driver.page_source
         soup = BeautifulSoup(response, "html.parser")
@@ -31,16 +32,17 @@ class Retabet(House):
                 bets_list.append(bet.text)
 
             bet = Bet(teams, bets_list)
-            self.ret_bets.append(bet)
-        self.real_names()
-        print("Retabet done")
-        return self.ret_bets
+            self.ret_bets[sport].append(bet)
+        self.real_names(sport)
+        end = time.time()
+        print(f"Retabet done in {end - start:.2f}")
+        return self.ret_bets[sport]
     
-    def real_names(self):
-        for bet in self.ret_bets:
+    def real_names(self, sport):
+        for bet in self.ret_bets[sport]:
             for team in bet.teams:
                 cnt, l_f = 0, []
-                for player in all_players:
+                for player in all_players[sport]:
                     if player[0] == team[0] and player.split()[-1] == team.split()[-1]:
                         cnt += 1
                         l_f.append((player, lev.jaro_winkler(bet.teams[0][::-1], player[::-1])))
