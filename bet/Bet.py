@@ -18,11 +18,6 @@ class Bet():
             return f"ERROR BET ({self.teams})"
         return f"{self.real_teams[0]} ({self.bets[0]}) x {self.real_teams[1]} ({self.bets[1]})"
     
-    def __eq__(self, x):
-        if self.is_error() or x.is_error():
-            return False
-        return self.real_teams == x.real_teams
-    
     def hash(self):
         if self.is_error():
             return None

@@ -47,4 +47,5 @@ class WilliamHill(House):
                         cnt += 1
                         l_f.append((player, lev.jaro_winkler(player, team)))
                 l_f.sort(key=lambda x: x[1], reverse=True)
-                bet.real_teams.append(l_f[0][0])
+                if cnt != 0:
+                    bet.real_teams.append(l_f[0][0])
