@@ -1,27 +1,10 @@
-import time
+from datetime import datetime, timedelta
+import math
 
-import threading
-
-def f(num):
-    print(num)
-    print(sum([x for x in range(10000000)]))
-    
-
-if __name__ == '__main__':
-    start = time.time()
-    for i in range(5):
-        f(50)
-    end = time.time()
-    print(end-start)
-    
-    
-    start = time.time()
-    threads = []
-    for i in range(5):
-        t = threading.Thread(target=f, args=(i,))
-        threads.append(t)
-        t.start()
-    for t in threads:
-        t.join()
-    end = time.time()
-    print(end-start)
+time_str = "Comienza en 34 min"
+mins = int(time_str.split()[2])
+date_match = datetime.now() + timedelta(minutes=mins)
+diff = (round(date_match.minute/5)*5) - date_match.minute
+date_match = date_match + timedelta(minutes=diff)
+ret = f"{date_match.day}-{date_match.hour:0>2}:{date_match.minute:0>2}"
+print(ret)
