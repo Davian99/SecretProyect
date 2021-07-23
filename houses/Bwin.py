@@ -1,9 +1,9 @@
 from houses.House import *
 
 class Bwin(House):
-    def __init__(self):
-        super().__init__()
-        self.link = "https://sports.bwin.es/es/sports"
+    def __init__(self, headless=True):
+        super().__init__(headless=headless)
+        self.link = "https://sports.bwin.es"
         self.sports = {"tennis" : "tenis-5", "table_tennis" : "tenis-de-mesa-56/apuestas"}
         self.ret_bets = {}
         self.wait_element = {"tennis" : "#main-view > ms-widget-layout > ms-widget-slot.col-9.widget-slot", 
@@ -13,7 +13,7 @@ class Bwin(House):
         return "Bwin"
 
     def link_sport(self, sport):
-        return f"{self.link}/{self.sports[sport]}"
+        return f"{self.link}/es/sports/{self.sports[sport]}"
 
     def sport_bets(self, sport):
         start = time.time()
@@ -45,14 +45,36 @@ class Bwin(House):
                 for bet, _ in zip(bets, range(2)):
                     bets_final.append(bet.text)
 
-                bet = Bet(teams_final, bets_final)
-                self.ret_bets[sport].append(bet)
+                b = Bet(teams_final, bets_final)
+                time_str = row.find('ms-event-info').text
+                b.date_time = self.get_time(time_str)
+                b.link = self.link + row.find('a')['href']
+                b.house = self.house()
+                self.ret_bets[sport].append(b)
             except:
                 pass
         self.real_names(sport)
         end = time.time()
         print(f"Bwin done in {end - start:.2f}")
         return self.ret_bets[sport]
+
+    def get_time(self, time_str):
+        if "En vivo" in time_str:
+            ret = "NOW"
+        elif "Comienza" in time_str:
+            mins = int(time_str.split()[2])
+            date_match = datetime.now() + timedelta(minutes=mins)
+            diff = (round(date_match.minute/5)*5) - date_match.minute
+            date_match = date_match + timedelta(minutes=diff)
+            ret = f"{date_match.day}-{date_match.hour:0>2}:{date_match.minute:0>2}"
+        elif "Hoy" in time_str or "ana" in time_str:
+            if "Hoy" in time_str:
+                day = datetime.now().day
+            else:
+                day = (datetime.now() + timedelta(days=1)).day
+            hour, minute = time_str.split()[2].split(':')
+            ret = f"{day}-{hour:0>2}:{minute}"
+        return ret
 
     def real_names(self, sport):
         for bet in self.ret_bets[sport]:

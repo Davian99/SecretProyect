@@ -1,9 +1,9 @@
 from houses.House import *
 
 class WilliamHill(House):
-    def __init__(self):
-        super().__init__()
-        self.link = "https://sports.williamhill.es/betting/es-es"
+    def __init__(self, headless=True):
+        super().__init__(headless=headless)
+        self.link = "https://sports.williamhill.es"
         self.sports = {"tennis" : "tenis/partidos", "table_tennis" : "tenis-de-mesa/partidos/fecha/hoy"}
         self.ret_bets = {}
         self.separators = {"tennis" : u"\u208B", "table_tennis" : u"\u208B"}
@@ -12,7 +12,7 @@ class WilliamHill(House):
         return "WilliamHill"
 
     def link_sport(self, sport):
-        return f"{self.link}/{self.sports[sport]}"
+        return f"{self.link}/betting/es-es/{self.sports[sport]}"
 
     def sport_bets(self, sport):
         start = time.time()
@@ -32,6 +32,14 @@ class WilliamHill(House):
             for bet in bets:
                 bets_final.append(bet.text)
             b = Bet(teams_final, bets_final)
+            if match['data-betinrun'] == 'true':
+                b.date_time = "NOW"
+            else:
+                match_time = match.find('time', attrs={'class':'eventStartTime localisable'}).text
+                day, month, hour = match_time.split()
+                b.date_time = f"{day}-{hour}"
+            b.link = self.link + teams['href']
+            b.house = self.house()
             self.ret_bets[sport].append(b)
         self.real_names(sport)
         end = time.time()

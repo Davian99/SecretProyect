@@ -5,10 +5,11 @@ from bet.Bet import Bet
 from database import *
 import Levenshtein as lev
 import time
+from datetime import datetime, timedelta
 
 class House(ABC):
-    def __init__(self):
-        self.driver = Driver(headless=True)
+    def __init__(self, headless):
+        self.driver = Driver(headless=headless)
         self.alive = True
     def __del__(self):
         if self.alive:

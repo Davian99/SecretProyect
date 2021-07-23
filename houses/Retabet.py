@@ -1,8 +1,8 @@
 from houses.House import *
 
 class Retabet(House):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, headless=True):
+        super().__init__(headless=headless)
         self.link = "https://apuestas.retabet.es"
         self.sports = {"tennis" : "tenis-m8"}
         self.ret_bets = {}

@@ -1,3 +1,5 @@
+import datetime
+
 class Bet():
     def __init__(self, teams, bets):
         self.teams = [x.strip().upper() for x in teams]
